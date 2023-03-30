@@ -1,0 +1,152 @@
+show databases;
+
+/* Normal syntax */
+CREATE DATABASE SOUTHWIND1;
+DROP DATABASE SOUTHWIND1; 
+
+/* with if condition syntax */
+CREATE DATABASE IF NOT EXISTS SOUTHWIND1;
+DROP DATABASE IF EXISTS SOUTHWIND1;
+
+/* Used to select specific database before running any query */
+USE SOUTHWIND1;
+SELECT DATABASE();
+
+/* return list of table in specific database*/ 
+show TABLES;
+
+/* Create table syntax without constaint*/ 
+CREATE TABLE IF NOT EXISTS Products(
+ProductId int,
+ProductCode char(3),
+Name varchar(30),
+Quantity int,
+Price decimal(7.2));
+
+/* Return table details e.g., Field,Type,Nullable,Key,Default*/ 
+DESCRIBE PRODUCTS;
+
+/* Insert Single record in Table */ 
+Insert into Products values 
+(1001,'PEN','Pen Red',5000,1.23);
+
+/* Insert Multiple record in Table */ 
+Insert into Products values 
+(1002,'MOU','Mouse Red',1000,1.33),
+(1003,'BOO','Book Red',2000,1.43),
+(1004,'LAP','Laptop Red',3000,1.53),
+(1005,'ERA','Eraser Red',4000,1.63),
+(1006,'SCA','Scale Red',6000,1.73);
+
+
+/* Auto Increment  primary key insert statement */
+Insert into Products(ProductCode,Name,Quantity,Price) values 
+('KEY','Keyboard Red',1000,1.33);
+
+/* Default Constaint insert statement */
+Insert into Products(Name,Quantity,Price) values 
+('Keyboard Red',1000,1.33);
+
+/* alter table with adding primary key & make column not null*/ 
+ALTER TABLE Products MODIFY ProductId INT NOT NULL PRIMARY KEY auto_increment;
+ALTER TABLE Products MODIFY ProductCode char(3) NULL default 'abc';
+
+/* alter table with removing primary key*/ 
+ALTER TABLE Products MODIFY ProductId INT NOT NULL;  /*Remove auto increment/*
+ALTER TABLE Products DROP PRIMARY KEY  ; /*Remove primary key/*
+
+/* Return all columns from table*/ 
+SELECT * FROM Products;
+
+/* Return specific column from table*/ 
+SELECT ProductCode,Name FROM Products;
+
+/* Now() function will return current dateandtime */
+Select 1+1,Now();
+
+/* Where Clause*/
+SELECT * FROM Products where Quantity < 3000;
+SELECT * FROM Products where ProductCode  = 'KEY';
+
+/* And/OR Operator with where clause*/
+SELECT * FROM Products where Name  like '%Red%' And Price = 1 or  Price = 2;
+
+/* Order by Clause*/
+select * from products order by Quantity; /* (By default order will be set as asc)*/
+select * from products order by ProductId asc;
+select * from products order by Quantity desc;
+
+
+/* number rows will be return based on provided limit*/
+select * from products order by ProductCode limit 3;
+
+/* first 3 records in the result set will be skipped...and then the next 2 rows will be returned*/
+select * from products order by Price limit 3,2;
+
+/*  alias on column used for changing column name */
+
+select ProductCode as Code ,Name as ProductName from products; 
+
+/*  return only distinct (different) values from entire row */
+
+select  distinct Price, quantity  from products ;
+
+/*  Group By Clause */
+select Name,count(*) as count from products group by Name order by count desc;
+
+/* Aggregate Function = Count() */
+Select Quantity,count(*)  from products group by Quantity;
+
+/* Aggregate Function = Avg() */
+Select avg(Quantity) from products; 
+Select avg(Quantity) from products group by Quantity;
+
+/* Aggregate Function = Max() */
+Select Price,max(Quantity) from products group by Price;
+
+/* Aggregate Function = Min() */
+Select Price,Min(Quantity) from products group by Price;
+
+/* Aggregate Function = Std() */
+Select Price,std(Quantity) from products group by Price;
+
+/* Aggregate Function = Sum() */
+Select Price,Sum(Quantity) from products group by Price;
+
+/* Having clause - that must be used with group by*/
+/* The HAVING clause was added to SQL because the WHERE keyword cannot be used with aggregate functions. */
+Select Price,Sum(Quantity) as sum from products group by Price having sum > 11000;
+Select avg(Quantity) as average from products group by Quantity having average < 4000;
+
+/* Update Record */
+
+/*Update Products set Price = Price * 1.1 */
+Update Products set Name = 'Keyboard Green' where ProductId = 1007;
+
+/* Delete Record * - It only deletes data which satisfied where condition*/
+delete from PRoducts where ProductID  = 1009;
+
+
+/* Foreign Key - Create Table*/
+CREATE TABLE IF NOT EXISTS Supplier(
+SupplierId int Not null ,
+SupplierName varchar(30),
+Country varchar(30),
+ProductId int,
+Primary Key(SupplierId),
+FOREIGN KEY (ProductId) REFERENCES Products(ProductId));
+
+Insert into Supplier values 
+(1,'Abc Ltd','IND',1002);
+
+Insert into Supplier values 
+(2,'Abc Ltd','IND',1002),
+(3,'Asia Ltd','USA',1006),
+(7,'Tokyo Traders','AUS',1002),
+(8,'Plutzer Ltd','IND',1004),
+(9,'Bigfoot Ltd','UK',1007);
+
+/* Join 2 tables*/
+
+Select * from Supplier join Products on Supplier.ProductId = Products.ProductId;
+Select * from Supplier s join Products p on s.ProductId = p.ProductId;
